@@ -75,7 +75,9 @@ extern uint8_t marlin_debug_flags;
 #define SERIAL_PRINTF(V...)     SERIAL_OUT(printf, V)
 #define SERIAL_FLUSH()          SERIAL_OUT(flush)
 
-#if TX_BUFFER_SIZE > 0
+#ifdef __STM32F1__
+  #define SERIAL_FLUSHTX()      SERIAL_OUT(flush)
+#elif TX_BUFFER_SIZE > 0
   #define SERIAL_FLUSHTX()      SERIAL_OUT(flushTX)
 #else
   #define SERIAL_FLUSHTX()
@@ -155,6 +157,8 @@ extern uint8_t marlin_debug_flags;
 #define SERIAL_ERROR_MSG(S)         do{ SERIAL_ERROR_START(); SERIAL_ECHOLNPGM(S); }while(0)
 
 #define SERIAL_ECHO_SP(C)           serial_spaces(C)
+
+#define SERIAL_ECHO_TERNARY(TF, PRE, ON, OFF, POST) serial_ternary(TF, PSTR(PRE), PSTR(ON), PSTR(OFF), PSTR(POST))
 
 //
 // Functions for serial printing from PROGMEM. (Saves loads of SRAM.)
