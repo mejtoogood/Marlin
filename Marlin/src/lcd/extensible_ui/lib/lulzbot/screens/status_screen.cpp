@@ -193,13 +193,8 @@ void StatusScreen::draw_temperature(draw_mode_t what) {
       int8_t(getActualFan_percent(FAN0))
     );
 
-    #if defined(TOUCH_UI_USE_UTF8) && defined(TOUCH_UI_UTF8_WESTERN_CHARSET)
-      const char *idle = PSTR(u8"%3d°C / idle");
-      const char *not_idle = PSTR(u8"%3d / %3d°C");
-    #else
-      const char *idle = PSTR("%3d C / idle");
-      const char *not_idle = PSTR("%3d / %3d C");
-    #endif
+    const char *idle = PSTR("%-3d C / idle");
+    const char *not_idle = PSTR("%-3d / %-3d C");
 
     sprintf_P(
       bed_str,
@@ -358,14 +353,10 @@ void StatusScreen::setStatusMessage(const char* message) {
      .cmd(CLEAR(true,true,true));
 
   draw_temperature(BACKGROUND);
-  #ifdef TOUCH_UI_USE_UTF8
-    load_utf8_bitmaps(cmd);
-  #endif
   draw_progress(BACKGROUND);
   draw_axis_position(BACKGROUND);
   draw_status_message(BACKGROUND, message);
   draw_interaction_buttons(BACKGROUND);
-
   storeBackground();
 
   #ifdef UI_FRAMEWORK_DEBUG
@@ -378,8 +369,9 @@ void StatusScreen::setStatusMessage(const char* message) {
   }
 }
 
-void StatusScreen::loadBitmaps() {
+void StatusScreen::onStartup() {
   // Load the bitmaps for the status screen
+
   using namespace Theme;
   constexpr uint32_t base = ftdi_memory_map::RAM_G;
   CLCD::mem_write_pgm(base + TD_Icon_Info.RAMG_offset,       TD_Icon,       sizeof(TD_Icon));
@@ -387,13 +379,8 @@ void StatusScreen::loadBitmaps() {
   CLCD::mem_write_pgm(base + Bed_Heat_Icon_Info.RAMG_offset, Bed_Heat_Icon, sizeof(Bed_Heat_Icon));
   CLCD::mem_write_pgm(base + Fan_Icon_Info.RAMG_offset,      Fan_Icon,      sizeof(Fan_Icon));
 
-  // Load fonts for internationalization
-  #ifdef TOUCH_UI_USE_UTF8
-    load_utf8_data(base + UTF8_FONT_OFFSET);
-  #endif
-}
+  setStatusMessage(F(WELCOME_MSG));
 
-void StatusScreen::onStartup() {
   UIFlashStorage::initialize();
 }
 

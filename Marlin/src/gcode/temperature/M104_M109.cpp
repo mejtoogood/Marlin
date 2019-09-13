@@ -20,10 +20,6 @@
  *
  */
 
-#include "../../inc/MarlinConfigPre.h"
-
-#if EXTRUDERS
-
 #include "../gcode.h"
 #include "../../module/temperature.h"
 #include "../../module/motion.h"
@@ -142,5 +138,3 @@ void GcodeSuite::M109() {
   if (set_temp)
     (void)thermalManager.wait_for_hotend(target_extruder, no_wait_for_cooling);
 }
-
-#endif // EXTRUDERS

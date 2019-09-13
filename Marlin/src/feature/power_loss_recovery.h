@@ -59,9 +59,7 @@ typedef struct {
     uint8_t active_extruder;
   #endif
 
-  #if HOTENDS
-    int16_t target_temperature[HOTENDS];
-  #endif
+  int16_t target_temperature[HOTENDS];
 
   #if HAS_HEATED_BED
     int16_t target_temperature_bed;
@@ -89,12 +87,16 @@ typedef struct {
     #endif
   #endif
 
-  // Relative axis modes
-  uint8_t axis_relative;
+  // Relative mode
+  bool relative_mode, relative_modes_e;
+
+  // Command queue
+  uint8_t queue_length, queue_index_r;
+  char queue_buffer[BUFSIZE][MAX_CMD_SIZE];
 
   // SD Filename and position
   char sd_filename[MAXPATHNAMELENGTH];
-  volatile uint32_t sdpos;
+  uint32_t sdpos;
 
   // Job elapsed time
   millis_t print_job_elapsed;
@@ -110,12 +112,7 @@ class PrintJobRecovery {
     static SdFile file;
     static job_recovery_info_t info;
 
-    static uint8_t queue_index_r;     //!< Queue index of the active command
-    static uint32_t cmd_sdpos,        //!< SD position of the next command
-                    sdpos[BUFSIZE];   //!< SD positions of queued commands
-
     static void init();
-    static void prepare();
 
     static inline void setup() {
       #if PIN_EXISTS(POWER_LOSS)
@@ -130,10 +127,6 @@ class PrintJobRecovery {
         #endif
       #endif
     }
-
-    // Track each command's file offsets
-    static inline uint32_t command_sdpos() { return sdpos[queue_index_r]; }
-    static inline void commit_sdpos(const uint8_t index_w) { sdpos[index_w] = cmd_sdpos; }
 
     static bool enabled;
     static void enable(const bool onoff);
@@ -157,13 +150,6 @@ class PrintJobRecovery {
       , const bool save_queue=true
     );
 
-  #if PIN_EXISTS(POWER_LOSS)
-    static inline void outage() {
-      if (enabled && IS_SD_PRINTING() && READ(POWER_LOSS_PIN) == POWER_LOSS_STATE)
-        _outage();
-    }
-  #endif
-
   static inline bool valid() { return info.valid_head && info.valid_head == info.valid_foot; }
 
   #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
@@ -174,10 +160,6 @@ class PrintJobRecovery {
 
   private:
     static void write();
-
-  #if PIN_EXISTS(POWER_LOSS)
-    static void _outage();
-  #endif
 };
 
 extern PrintJobRecovery recovery;

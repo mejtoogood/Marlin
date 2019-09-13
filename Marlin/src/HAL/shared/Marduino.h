@@ -58,9 +58,6 @@
     //#define strchr_P(s,c) strchr(s,c)
   #endif
 
-  #ifndef snprintf_P
-    #define snprintf_P snprintf
-  #endif
   #ifndef vsnprintf_P
     #define vsnprintf_P vsnprintf
   #endif

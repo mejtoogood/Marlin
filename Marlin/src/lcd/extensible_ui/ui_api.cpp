@@ -168,7 +168,7 @@ namespace ExtUI {
   }
 
   void enableHeater(const extruder_t extruder) {
-    #if HOTENDS && HEATER_IDLE_HANDLER
+    #if HEATER_IDLE_HANDLER
       thermalManager.reset_heater_idle_timer(extruder - E0);
     #endif
   }
@@ -184,18 +184,14 @@ namespace ExtUI {
         #if HAS_HEATED_CHAMBER
           case CHAMBER: return; // Chamber has no idle timer
         #endif
-        default:
-          #if HOTENDS
-            thermalManager.reset_heater_idle_timer(heater - H0);
-          #endif
-          break;
+        default: thermalManager.reset_heater_idle_timer(heater - H0);
       }
     #endif
   }
 
   bool isHeaterIdle(const extruder_t extruder) {
     return false
-      #if HOTENDS && HEATER_IDLE_HANDLER
+      #if HEATER_IDLE_HANDLER
         || thermalManager.hotend_idle[extruder - E0].timed_out
       #endif
     ;
@@ -210,12 +206,7 @@ namespace ExtUI {
         #if HAS_HEATED_CHAMBER
           case CHAMBER: return false; // Chamber has no idle timer
         #endif
-        default:
-          #if HOTENDS
-            return thermalManager.hotend_idle[heater - H0].timed_out;
-          #else
-            return false;
-          #endif
+        default: return thermalManager.hotend_idle[heater - H0].timed_out;
       }
     #else
       return false;
@@ -850,28 +841,22 @@ namespace ExtUI {
   }
 
   void setTargetTemp_celsius(float value, const heater_t heater) {
+    constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
+    const int16_t e = heater - H0;
     enableHeater(heater);
     #if HAS_HEATED_BED
       if (heater == BED)
         thermalManager.setTargetBed(clamp(value, 0, BED_MAXTEMP - 10));
       else
     #endif
-      {
-        #if HOTENDS
-          static constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
-          const int16_t e = heater - H0;
-          thermalManager.setTargetHotend(clamp(value, 0, heater_maxtemp[e] - 15), e);
-        #endif
-      }
+        thermalManager.setTargetHotend(clamp(value, 0, heater_maxtemp[e] - 15), e);
   }
 
   void setTargetTemp_celsius(float value, const extruder_t extruder) {
-    #if HOTENDS
-      constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
-      const int16_t e = extruder - E0;
-      enableHeater(extruder);
-      thermalManager.setTargetHotend(clamp(value, 0, heater_maxtemp[e] - 15), e);
-    #endif
+    constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
+    const int16_t e = extruder - E0;
+    enableHeater(extruder);
+    thermalManager.setTargetHotend(clamp(value, 0, heater_maxtemp[e] - 15), e);
   }
 
   void setTargetFan_percent(const float value, const fan_t fan) {

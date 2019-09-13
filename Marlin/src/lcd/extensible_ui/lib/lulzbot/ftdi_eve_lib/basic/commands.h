@@ -159,7 +159,6 @@ class CLCD::FontMetrics {
     uint32_t  height;
     uint32_t  ptr;
 
-    FontMetrics() {}
     FontMetrics(uint8_t font) {load(font);}
 
     void load(uint8_t font);

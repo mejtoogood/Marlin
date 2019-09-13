@@ -283,31 +283,12 @@
   #include "../feature/I2CPositionEncoder.h"
 #endif
 
-enum AxisRelative : uint8_t { REL_X, REL_Y, REL_Z, REL_E, E_MODE_ABS, E_MODE_REL };
-
 class GcodeSuite {
 public:
 
-  static uint8_t axis_relative;
+  GcodeSuite() {}
 
-  static inline bool axis_is_relative(const AxisEnum a) {
-    if (a == E_AXIS) {
-      if (TEST(axis_relative, E_MODE_REL)) return true;
-      if (TEST(axis_relative, E_MODE_ABS)) return false;
-    }
-    return TEST(axis_relative, a);
-  }
-  static inline void set_relative_mode(const bool rel) {
-    axis_relative = rel ? _BV(REL_X) | _BV(REL_Y) | _BV(REL_Z) | _BV(REL_E) : 0;
-  }
-  static inline void set_e_relative() {
-    CBI(axis_relative, E_MODE_ABS);
-    SBI(axis_relative, E_MODE_REL);
-  }
-  static inline void set_e_absolute() {
-    CBI(axis_relative, E_MODE_REL);
-    SBI(axis_relative, E_MODE_ABS);
-  }
+  static bool axis_relative_modes[];
 
   #if ENABLED(CNC_WORKSPACE_PLANES)
     /**
@@ -562,17 +543,10 @@ private:
     static void M100();
   #endif
 
-  #if EXTRUDERS
-    static void M104();
-    static void M109();
-  #endif
-
+  static void M104();
   static void M105();
-
-  #if FAN_COUNT > 0
-    static void M106();
-    static void M107();
-  #endif
+  static void M106();
+  static void M107();
 
   #if DISABLED(EMERGENCY_PARSER)
     static void M108();
@@ -582,6 +556,8 @@ private:
       static void M876();
     #endif
   #endif
+
+  static void M109();
 
   static void M110();
   static void M111();
@@ -623,7 +599,7 @@ private:
     //static void M191();
   #endif
 
-  #if HOTENDS && HAS_LCD_MENU
+  #if HAS_LCD_MENU
     static void M145();
   #endif
 
@@ -684,11 +660,7 @@ private:
   #endif
 
   static void M220();
-
-  #if EXTRUDERS
-    static void M221();
-  #endif
-
+  static void M221();
   static void M226();
 
   #if ENABLED(PHOTO_GCODE)

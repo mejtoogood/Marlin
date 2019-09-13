@@ -25,7 +25,7 @@
  * emergency_parser.h - Intercept special commands directly in the serial stream
  */
 
-#include "../inc/MarlinConfigPre.h"
+#define FORCE_INLINE __attribute__((always_inline)) inline
 
 #if ENABLED(HOST_PROMPT_SUPPORT)
   #include "host_actions.h"

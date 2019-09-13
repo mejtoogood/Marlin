@@ -39,9 +39,6 @@ bool Stopwatch::stop() {
   #endif
 
   if (isRunning() || isPaused()) {
-    #if ENABLED(EXTENSIBLE_UI)
-      ExtUI::onPrintTimerStopped();
-    #endif
     state = STOPPED;
     stopTimestamp = millis();
     return true;
@@ -55,9 +52,6 @@ bool Stopwatch::pause() {
   #endif
 
   if (isRunning()) {
-    #if ENABLED(EXTENSIBLE_UI)
-      ExtUI::onPrintTimerPaused();
-    #endif
     state = PAUSED;
     stopTimestamp = millis();
     return true;

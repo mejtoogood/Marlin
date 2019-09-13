@@ -117,7 +117,7 @@ bool Sd2Card::usbStartup() {
     if (!UHS_START) {
       SERIAL_ECHOLNPGM(" failed.");
       #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
-        LCD_MESSAGEPGM(MSG_MEDIA_USB_FAILED);
+        LCD_MESSAGEPGM("USB start failed");
       #endif
       return false;
     }
@@ -214,7 +214,7 @@ void Sd2Card::idle() {
             SERIAL_ECHOLNPGM("Waiting for media");
           #endif
           #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
-            LCD_MESSAGEPGM(MSG_MEDIA_WAITING);
+            LCD_MESSAGEPGM("Waiting for media");
           #endif
           GOTO_STATE_AFTER_DELAY(state, 2000);
         }
@@ -231,7 +231,7 @@ void Sd2Card::idle() {
       #endif
       #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
         if (state != MEDIA_READY)
-          LCD_MESSAGEPGM(MSG_MEDIA_USB_REMOVED);
+          LCD_MESSAGEPGM("USB device removed");
       #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
     }
@@ -242,14 +242,14 @@ void Sd2Card::idle() {
         SERIAL_ECHOLNPGM("Media removed");
       #endif
       #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
-        LCD_MESSAGEPGM(MSG_MEDIA_REMOVED);
+        LCD_MESSAGEPGM("Media removed");
       #endif
       GOTO_STATE_AFTER_DELAY( WAIT_FOR_DEVICE, 0 );
     }
 
     else if (task_state == UHS_STATE(ERROR)) {
         #if EITHER(ULTRA_LCD, EXTENSIBLE_UI)
-          LCD_MESSAGEPGM(MSG_MEDIA_READ_ERROR);
+          LCD_MESSAGEPGM("Media read error");
         #endif
         GOTO_STATE_AFTER_DELAY( MEDIA_ERROR, 0 );
     }

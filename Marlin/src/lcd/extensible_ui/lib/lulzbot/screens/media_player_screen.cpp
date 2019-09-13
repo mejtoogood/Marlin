@@ -161,7 +161,7 @@ void MediaPlayerScreen::playStream(void *obj, media_streamer_func_t *data_stream
       // everything that is stored in RAMG.
       cmd.cmd(CMD_DLSTART).execute();
       DLCache::init();
-      StatusScreen::loadBitmaps();
+      StatusScreen::onStartup();
     }
   #endif // FTDI_API_LEVEL >= 810
 }

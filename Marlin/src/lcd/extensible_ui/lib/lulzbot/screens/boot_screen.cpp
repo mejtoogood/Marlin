@@ -62,7 +62,6 @@ void BootScreen::onIdle() {
     PUSH_SCREEN(StatusScreen);
   } else {
     if (!UIFlashStorage::is_valid()) {
-      StatusScreen::loadBitmaps();
       SpinnerDialogBox::show(F("Please wait..."));
       UIFlashStorage::format_flash();
       SpinnerDialogBox::hide();
@@ -74,16 +73,12 @@ void BootScreen::onIdle() {
       if (!MediaPlayerScreen::playBootMedia())
         showSplashScreen();
     }
-
-    StatusScreen::loadBitmaps();
-
     #ifdef LULZBOT_USE_BIOPRINTER_UI
       GOTO_SCREEN(BioConfirmHomeXYZ);
       current_screen.forget();
       PUSH_SCREEN(StatusScreen);
       PUSH_SCREEN(BioConfirmHomeE);
     #else
-      StatusScreen::setStatusMessage(F(WELCOME_MSG));
       GOTO_SCREEN(StatusScreen);
     #endif
   }

@@ -22,7 +22,7 @@
 
 #include "../../inc/MarlinConfig.h"
 
-#if HOTENDS && HAS_LCD_MENU
+#if HAS_LCD_MENU
 
 #include "../gcode.h"
 #include "../../lcd/ultralcd.h"
@@ -58,4 +58,4 @@ void GcodeSuite::M145() {
   }
 }
 
-#endif // HOTENDS && HAS_LCD_MENU
+#endif // HAS_LCD_MENU

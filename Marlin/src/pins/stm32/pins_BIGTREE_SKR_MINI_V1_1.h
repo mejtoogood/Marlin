@@ -106,55 +106,43 @@
 #if HAS_SPI_LCD
   #define BEEPER_PIN       PC10
   #define BTN_ENC          PC11
+  #define LCD_PINS_RS      PC12
 
-  #if ENABLED(CR10_STOCKDISPLAY)
-    #define LCD_PINS_RS    PC15
+  #define BTN_EN1          PD2
+  #define BTN_EN2          PB8
 
-    #define BTN_EN1        PB6
-    #define BTN_EN2        PC13
+  #define LCD_PINS_ENABLE  PB6
 
-    #define LCD_PINS_ENABLE PC14
-    #define LCD_PINS_D4    PB7
+  #if ENABLED(FYSETC_MINI_12864)
 
-  #else
+    #define LCD_BACKLIGHT_PIN -1
+    #define LCD_RESET_PIN  PC13
+    #define DOGLCD_A0      PC12
+    #define DOGLCD_CS      PB6
+    #define DOGLCD_SCK     PB3
+    #define DOGLCD_MOSI    PB5
 
-    #define LCD_PINS_RS      PC12
+    #define FORCE_SOFT_SPI   // SPI MODE3
 
-    #define BTN_EN1          PD2
-    #define BTN_EN2          PB8
+    #define LED_PIN        PB7   // red pwm
+    //#define LED_PIN        PC15   // green
+    //#define LED_PIN        PC14   // blue
 
-    #define LCD_PINS_ENABLE  PB6
+    //#if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
+    //  #ifndef RGB_LED_R_PIN
+    //    #define RGB_LED_R_PIN PB7
+    //  #endif
+    //  #ifndef RGB_LED_G_PIN
+    //    #define RGB_LED_G_PIN PC15
+    //  #endif
+    //  #ifndef RGB_LED_B_PIN
+    //    #define RGB_LED_B_PIN PC14
+    //  #endif
+    //#elif ENABLED(FYSETC_MINI_12864_2_1)
+    //  #define NEOPIXEL_PIN    PB7
+    //#endif
 
-    #if ENABLED(FYSETC_MINI_12864)
-
-      #define LCD_BACKLIGHT_PIN -1
-      #define LCD_RESET_PIN  PC13
-      #define DOGLCD_A0      PC12
-      #define DOGLCD_CS      PB6
-      #define DOGLCD_SCK     PB3
-      #define DOGLCD_MOSI    PB5
-
-      #define FORCE_SOFT_SPI   // SPI MODE3
-
-      #define LED_PIN        PB7   // red pwm
-      //#define LED_PIN        PC15   // green
-      //#define LED_PIN        PC14   // blue
-
-      //#if EITHER(FYSETC_MINI_12864_1_2, FYSETC_MINI_12864_2_0)
-      //  #ifndef RGB_LED_R_PIN
-      //    #define RGB_LED_R_PIN PB7
-      //  #endif
-      //  #ifndef RGB_LED_G_PIN
-      //    #define RGB_LED_G_PIN PC15
-      //  #endif
-      //  #ifndef RGB_LED_B_PIN
-      //    #define RGB_LED_B_PIN PC14
-      //  #endif
-      //#elif ENABLED(FYSETC_MINI_12864_2_1)
-      //  #define NEOPIXEL_PIN    PB7
-      //#endif
-
-    #else // !FYSETC_MINI_12864
+  #else // !FYSETC_MINI_12864
 
     #define LCD_PINS_D4    PC13
     #if ENABLED(ULTIPANEL)
@@ -163,9 +151,7 @@
       #define LCD_PINS_D7  PC14
     #endif
 
-    #endif // !FYSETC_MINI_12864
-
-  #endif
+  #endif // !FYSETC_MINI_12864
 
 #endif // HAS_SPI_LCD
 
@@ -174,20 +160,20 @@
 //
 
 // By default the onboard SD is enabled.
-// set SDCARD_CONNECTION form 'ONBOARD' to 'LCD' and use an external SD (connected to LCD)
-#define HAS_ONBOARD_SD
-#ifndef SDCARD_CONNECTION
-  #define SDCARD_CONNECTION ONBOARD
-#endif
+// To disable it and use an external SD (connected to LCD)
+// enable STM32_SD_LCD.
 
-#if SD_CONNECTION_IS(LCD)
+//#define STM32_SD_LCD
+
+#if ENABLED(STM32_SD_LCD)
   #define ENABLE_SPI3
   #define SD_DETECT_PIN    PB9
   #define SCK_PIN          PB3
   #define MISO_PIN         PB4
   #define MOSI_PIN         PB5
   #define SS_PIN           PA15
-#elif SD_CONNECTION_IS(ONBOARD)
+#else
+  #define SDCARD_CONNECTION ONBOARD
   #define ENABLE_SPI1
   #define SD_DETECT_PIN    PA3
   #define SCK_PIN          PA5
@@ -195,8 +181,6 @@
   #define MOSI_PIN         PA7
   #define SS_PIN           PA4
 #endif
-#define ON_BOARD_SPI_DEVICE 1    //SPI1
-#define ONBOARD_SD_CS_PIN  PA4   // Chip select for "System" SD card
 
 #ifndef ST7920_DELAY_1
   #define ST7920_DELAY_1 DELAY_NS(125)

@@ -698,6 +698,8 @@ void MMU2::filament_runout() {
     }
 
     LCD_MESSAGEPGM(MSG_MMU2_EJECTING_FILAMENT);
+    const bool saved_e_relative_mode = gcode.axis_relative_modes[E_AXIS];
+    gcode.axis_relative_modes[E_AXIS] = true;
 
     enable_E0();
     current_position[E_AXIS] -= MMU2_FILAMENTCHANGE_EJECT_FEED;
@@ -732,6 +734,8 @@ void MMU2::filament_runout() {
     set_runout_valid(false);
 
     BUZZ(200, 404);
+
+    gcode.axis_relative_modes[E_AXIS] = saved_e_relative_mode;
 
     disable_E0();
 
@@ -780,6 +784,9 @@ void MMU2::filament_runout() {
     planner.synchronize();
     enable_E0();
 
+    const bool saved_e_relative_mode = gcode.axis_relative_modes[E_AXIS];
+    gcode.axis_relative_modes[E_AXIS] = true;
+
     const E_Step* step = sequence;
 
     for (uint8_t i = 0; i < steps; i++) {
@@ -796,6 +803,8 @@ void MMU2::filament_runout() {
 
       step++;
     }
+
+    gcode.axis_relative_modes[E_AXIS] = saved_e_relative_mode;
 
     disable_E0();
   }

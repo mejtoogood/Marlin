@@ -53,9 +53,8 @@
 #define LCD_PINS_ENABLE    17   // ST9720 DAT
 #define LCD_PINS_D4        30   // ST9720 CLK
 
-#if ENABLED(BLTOUCH)
+#if DISABLED(SPEAKER) && ENABLED(BLTOUCH)
   #define SERVO0_PIN 27
-  #undef BEEPER_PIN
 #endif
 
 // Alter timing for graphical display
